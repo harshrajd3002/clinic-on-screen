@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Symptoms to Disease Checker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap and FontAwesome -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            min-height: 100vh;
+            background: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%);
+        }
+        .card {
+            background: rgba(255,255,255,0.85);
+            border: none;
+            border-radius: 2.5rem;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.18);
+            padding: 3rem 3.5rem !important;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .disease-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            justify-content: center;
+        }
+        .disease-btn {
+            border-radius: 2rem;
+            border: 2px solid #43cea2;
+            background: #f8fafc;
+            color: #185a9d;
+            font-size: 1.13rem;
+            font-weight: 500;
+            padding: 0.7rem 1.6rem;
+            cursor: pointer;
+            transition: background 0.25s, color 0.25s, border 0.25s, box-shadow 0.25s, transform 0.2s;
+            outline: none;
+            box-shadow: 0 2px 8px #43cea21a;
+            will-change: transform;
+        }
+        .disease-btn.selected,
+        .disease-btn:active {
+            background: linear-gradient(90deg, #43cea2 0%, #185a9d 100%);
+            color: #fff !important;
+            border: 2px solid #185a9d;
+            box-shadow: 0 4px 16px #185a9d33;
+            transform: scale(1.07);
+        }
+        .disease-btn:focus {
+            box-shadow: 0 0 0 2px #43cea255;
+        }
+        .disease-btn:hover {
+            background: linear-gradient(90deg, #185a9d 0%, #43cea2 100%);
+            color: #fff !important;
+            transform: scale(1.08);
+            z-index: 1;
+            box-shadow: 0 4px 16px #185a9d33;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #43cea2 0%, #185a9d 100%);
+            border: none;
+            font-weight: 700;
+            font-size: 1.18rem;
+            border-radius: 0.85rem;
+            padding: 0.85rem 0;
+            transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+            box-shadow: 0 2px 8px #43cea244;
+        }
+        .btn-primary:hover,
+        .btn-primary:focus {
+            background: linear-gradient(90deg, #185a9d 0%, #43cea2 100%);
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 6px 24px #185a9d33;
+        }
+        #result {
+            min-height: 48px;
+            font-size: 1.13rem;
+            border-radius: 0.85rem;
+        }
+        .disease-icon {
+            font-size: 2.7rem;
+            color: #43cea2;
+            display: block;
+            margin: 0 auto 1.2rem auto;
+        }
+        .brand-medico {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #43cea2;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .brand-medico i {
+            color: #43cea2;
+            font-size: 2.2rem;
+            transition: color 0.2s;
+        }
+        .brand-medico:hover,
+        .brand-medico:focus {
+            color: #185a9d;
+        }
+        .doctor-warning {
+            color: #b30000;
+            background: #fff3f3;
+            border: 1px solid #ffcccc;
+            border-radius: 0.85rem;
+            padding: 0.85rem 1.2rem;
+            font-size: 1.13rem;
+            font-weight: 500;
+            margin-bottom: 2rem;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.7rem;
+        }
+        footer {
+            text-align: center;
+            padding: 1.2rem 0 0.5rem 0;
+            color: #185a9d;
+            font-size: 1.05rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            background: transparent;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            align-items: center;
+        }
+        .footer-thanks {
+            color: #fff;
+            padding: 0.2em 0.7em;
+            border-radius: 0.6em;
+            font-weight: 700;
+            box-shadow: 0 2px 8px #43cea244;
+            display: inline-block;
+            margin: 0 0.2em;
+            letter-spacing: 1px;
+            font-size: 1.08em;
+            transition: background 0.3s, color 0.3s;
+        }
+        ::-webkit-scrollbar {
+            width: 10px;
+            background: #e3f6fd;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(120deg, #43cea2 0%, #185a9d 100%);
+            border-radius: 6px;
+        }
+        .lang-switcher {
+            display: flex;
+            justify-content: center;
+            gap: 1.2rem;
+            margin-bottom: 2.2rem;
+            position: relative;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .lang-btn {
+            border: none;
+            outline: none;
+            padding: 0.7rem 2.2rem 0.7rem 2.2rem;
+            border-radius: 2rem;
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: rgb(103, 199, 243);
+            background: transparent;
+            box-shadow: 0 2px 12px #43cea244;
+            transition: background 0.25s, color 0.25s, box-shadow 0.25s, transform 0.18s;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            z-index: 1;
+            opacity: 0.7;
+            filter: grayscale(0.4) brightness(0.95);
+        }
+        .lang-btn.selected,
+        .lang-btn:focus {
+            color: #fff;
+            opacity: 1;
+            filter: none;
+            transform: scale(1.07);
+            z-index: 2;
+        }
+        .lang-btn:hover {
+            opacity: 1;
+            filter: none;
+            transform: scale(1.09);
+            box-shadow: 0 6px 24px #185a9d33;
+        }
+        .lang-btn .fa-globe,
+        .lang-btn .fa-language,
+        .lang-btn .fa-flag {
+            font-size: 1.3em;
+            opacity: 0.85;
+        }
+        .lang-slider-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            border-radius: 2rem;
+            background: linear-gradient(90deg, #43cea2 0%, #185a9d 100%);
+            z-index: 0;
+            transition: all 0.35s cubic-bezier(.77, 0, .18, 1);
+            box-shadow: 0 4px 18px #185a9d33;
+        }
+        @media (max-width: 600px) {
+            .lang-switcher { gap: 0.5rem; }
+            .lang-btn { font-size: 0.98rem; padding: 0.5rem 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-light bg-transparent mb-3">
+        <div class="container-fluid">
+            <a href="#" class="brand-medico">
+                <i class="fa-solid fa-laptop-medical"></i>
+                CLINIC ON SCREEN
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-xl-12 col-lg-12 col-md-12">
+                <div class="card p-5">
+                    <!-- Language Switcher -->
+                    <div class="lang-switcher">
+                        <div id="lang-slider-bar" class="lang-slider-bar"></div>
+                        <button type="button" id="lang-en" class="lang-btn selected">
+                            <i class="fa-solid fa-globe"></i> English
+                        </button>
+                        <button type="button" id="lang-hi" class="lang-btn">
+                            <i class="fa-solid fa-language"></i> हिन्दी
+                        </button>
+                        <button type="button" id="lang-gu" class="lang-btn">
+                            <i class="fa-solid fa-flag"></i> ગુજરાતી
+                        </button>
+                    </div>
+                    <span class="disease-icon text-center"><i class="fa-solid fa-viruses"></i></span>
+                    <h2 class="text-center mb-4 fw-bold">Symptoms to Disease Checker</h2>
+                    <div class="doctor-warning mb-3">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        Please visit your doctor for proper diagnosis.
+                    </div>
+                    <!-- Symptom Form -->
+                    <form id="symptomForm" autocomplete="off">
+                        <div>
+                            <label class="form-label fw-semibold mb-2" style="font-size:1.1rem;">
+                                <i class="fa-solid fa-stethoscope me-2"></i>
+                                Select symptoms to see possible diseases
+                            </label>
+                            <input id="symptomSearch" type="text" class="form-control mb-3"
+                                placeholder="Search symptoms..." autocomplete="off">
+                            <div id="symptomGrid" class="disease-grid"></div>
+                            <button type="button" id="findDiseaseBtn" class="btn btn-primary mt-3 w-100">
+                                Find Possible Diseases
+                            </button>
+                        </div>
+                    </form>
+                    <div id="result" class="alert mt-4 d-none"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        Design and Developed by <span class="footer-thanks">HARSHRAJSINH DODIYA</span><br>
+        Special Thanks to <span class="footer-thanks">CHAITANYASINH UMAT</span>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Main JS -->
+    <script>
+        // --- Disease and Symptom Data ---
+        const diseaseDataByLang = {
+            en: [
+                { disease: "Flu (Influenza)", symptoms: ["fever", "cough", "fatigue", "muscle pain", "headache"] },
+                { disease: "Meningitis", symptoms: ["fever", "headache", "stiff neck", "photophobia", "nausea", "vomiting"] },
+                { disease: "Heart Attack (Myocardial Infarction)", symptoms: ["chest pain", "shortness of breath", "palpitations", "sweating", "nausea"] },
+                { disease: "Common Cold", symptoms: ["sore throat", "cough", "runny nose", "sneezing"] },
+                { disease: "Gastroenteritis", symptoms: ["abdominal pain", "nausea", "vomiting", "diarrhea", "fever"] },
+                { disease: "Dengue", symptoms: ["muscle pain", "fever", "fatigue", "rash", "joint pain"] },
+                { disease: "Measles", symptoms: ["rash", "fever", "cough", "runny nose", "red eyes"] },
+                { disease: "Migraine", symptoms: ["dizziness", "headache", "nausea", "sensitivity to light", "sensitivity to sound"] },
+                { disease: "Chikungunya", symptoms: ["joint pain", "rash", "fever", "muscle pain"] },
+                { disease: "COVID-19", symptoms: ["loss of taste", "loss of smell", "fever", "cough", "sore throat"] },
+                { disease: "Tuberculosis", symptoms: ["weight loss", "night sweats", "cough", "fever", "fatigue"] },
+                { disease: "Mononucleosis", symptoms: ["swollen glands", "fever", "fatigue", "sore throat"] },
+                { disease: "Glaucoma", symptoms: ["blurred vision", "headache", "nausea", "eye pain"] },
+                { disease: "Panic Attack", symptoms: ["palpitations", "chest pain", "anxiety", "shortness of breath"] },
+                { disease: "Kidney Infection (Pyelonephritis)", symptoms: ["back pain", "fever", "blood in urine", "painful urination"] },
+                { disease: "Hepatitis", symptoms: ["itching", "rash", "yellow skin", "dark urine", "abdominal pain"] },
+                { disease: "Encephalitis", symptoms: ["confusion", "headache", "fever", "seizures"] },
+                { disease: "Major Depression", symptoms: ["depression", "fatigue", "weight loss", "insomnia"] },
+                { disease: "Malaria", symptoms: ["chills", "sweating", "fever", "headache", "muscle pain"] },
+                { disease: "Typhoid", symptoms: ["fever", "headache", "abdominal pain", "constipation", "rash"] },
+                { disease: "Heart Failure", symptoms: ["chest pain", "shortness of breath", "leg swelling", "fatigue"] },
+                { disease: "Pneumonia", symptoms: ["productive cough", "fever", "chest pain", "shortness of breath"] },
+                { disease: "Asthma", symptoms: ["wheezing", "shortness of breath", "chest tightness", "cough"] },
+                { disease: "Diabetes Mellitus", symptoms: ["frequent urination", "excessive thirst", "weight loss", "blurred vision"] },
+                { disease: "Urinary Tract Infection", symptoms: ["painful urination", "frequent urination", "blood in urine", "fever"] },
+                { disease: "Hypothyroidism", symptoms: ["hair loss", "weight gain", "cold intolerance", "fatigue", "constipation"] },
+                { disease: "Hyperthyroidism", symptoms: ["weight loss", "heat intolerance", "palpitations", "anxiety"] },
+                { disease: "Alzheimer's Disease", symptoms: ["memory loss", "confusion", "unsteady gait", "difficulty speaking"] },
+                { disease: "Epilepsy", symptoms: ["seizures", "confusion", "memory loss", "muscle twitching"] },
+                { disease: "Peripheral Neuropathy", symptoms: ["numbness", "tingling", "weakness", "loss of coordination"] },
+                { disease: "Conjunctivitis", symptoms: ["red eyes", "eye pain", "blurred vision", "sensitivity to light"] },
+                { disease: "Otitis Media", symptoms: ["ear pain", "hearing loss", "ear ringing", "dizziness"] },
+                { disease: "Leukemia", symptoms: ["nosebleed", "bleeding gums", "easy bruising", "fatigue"] },
+                { disease: "Crohn's Disease", symptoms: ["mouth ulcers", "abdominal pain", "diarrhea", "rectal bleeding"] },
+                { disease: "Cellulitis", symptoms: ["swelling", "pain", "redness", "warmth"] },
+                { disease: "Deep Vein Thrombosis", symptoms: ["calf pain", "leg swelling", "unsteady gait", "redness"] },
+                { disease: "Stroke", symptoms: ["drooping face", "difficulty speaking", "weakness", "loss of balance"] },
+                { disease: "Lung Cancer", symptoms: ["persistent cough", "weight loss", "night sweats", "chest pain"] },
+                { disease: "Sleep Apnea", symptoms: ["snoring", "sleepiness", "restlessness", "morning headache"] },
+                { disease: "Generalized Anxiety Disorder", symptoms: ["irritability", "restlessness", "insomnia", "anxiety"] },
+                { disease: "Schizophrenia", symptoms: ["hallucinations", "delusions", "paranoia", "memory loss"] }
+            ],
+            hi: [
+                { disease: "फ्लू", symptoms: ["बुखार", "खांसी", "थकान", "मांसपेशी दर्द", "सिरदर्द"] },
+                { disease: "मेनिन्जाइटिस", symptoms: ["बुखार", "सिरदर्द", "गर्दन अकड़ना", "रोशनी से परेशानी", "मतली", "उल्टी"] },
+                { disease: "हार्ट अटैक", symptoms: ["सीने में दर्द", "सांस फूलना", "धड़कन तेज", "पसीना", "मतली"] },
+                { disease: "सर्दी", symptoms: ["गला खराब", "खांसी", "नाक बहना", "छींक"] },
+                { disease: "पेट का इंफेक्शन", symptoms: ["पेट दर्द", "मतली", "उल्टी", "दस्त", "बुखार"] },
+                { disease: "डेंगू", symptoms: ["मांसपेशी दर्द", "बुखार", "थकान", "चक्कते", "जोड़ दर्द"] },
+                { disease: "खसरा", symptoms: ["चक्कते", "बुखार", "खांसी", "नाक बहना", "लाल आंखें"] },
+                { disease: "माइग्रेन", symptoms: ["चक्कर", "सिरदर्द", "मतली", "रोशनी से परेशानी", "आवाज से परेशानी"] },
+                { disease: "चिकनगुनिया", symptoms: ["जोड़ दर्द", "चक्कते", "बुखार", "मांसपेशी दर्द"] },
+                { disease: "कोविड", symptoms: ["स्वाद नहीं आना", "गंध नहीं आना", "बुखार", "खांसी", "गला खराब"] },
+                { disease: "टीबी", symptoms: ["वजन कम", "रात को पसीना", "खांसी", "बुखार", "थकान"] },
+                { disease: "मोनोन्यूक्लिओसिस", symptoms: ["गांठ सूजना", "बुखार", "थकान", "गला खराब"] },
+                { disease: "ग्लूकोमा", symptoms: ["धुंधला दिखना", "सिरदर्द", "मतली", "आंख में दर्द"] },
+                { disease: "पैनिक अटैक", symptoms: ["धड़कन तेज", "सीने में दर्द", "घबराहट", "सांस फूलना"] },
+                { disease: "किडनी इंफेक्शन", symptoms: ["पीठ दर्द", "बुखार", "पेशाब में खून", "पेशाब में जलन"] },
+                { disease: "हेपेटाइटिस", symptoms: ["खुजली", "चक्कते", "पीली त्वचा", "गहरा पेशाब", "पेट दर्द"] },
+                { disease: "इंसेफेलाइटिस", symptoms: ["घबराहट", "सिरदर्द", "बुखार", "दौरे"] },
+                { disease: "डिप्रेशन", symptoms: ["डिप्रेशन", "थकान", "वजन कम", "नींद नहीं आना"] },
+                { disease: "मलेरिया", symptoms: ["ठंड लगना", "पसीना", "बुखार", "सिरदर्द", "मांसपेशी दर्द"] },
+                { disease: "टाइफाइड", symptoms: ["बुखार", "सिरदर्द", "पेट दर्द", "कब्ज", "चक्कते"] },
+                { disease: "दिल कमजोर", symptoms: ["सीने में दर्द", "सांस फूलना", "पैर सूजना", "थकान"] },
+                { disease: "निमोनिया", symptoms: ["बलगम वाली खांसी", "बुखार", "सीने में दर्द", "सांस फूलना"] },
+                { disease: "अस्थमा", symptoms: ["सीटी जैसी आवाज", "सांस फूलना", "सीने में जकड़न", "खांसी"] },
+                { disease: "शुगर", symptoms: ["बार-बार पेशाब", "ज्यादा प्यास", "वजन कम", "धुंधला दिखना"] },
+                { disease: "पेशाब का इंफेक्शन", symptoms: ["पेशाब में जलन", "बार-बार पेशाब", "पेशाब में खून", "बुखार"] },
+                { disease: "हाइपोथायराइड", symptoms: ["बाल झड़ना", "वजन बढ़ना", "ठंड लगना", "थकान", "कब्ज"] },
+                { disease: "हाइपरथायराइड", symptoms: ["वजन कम", "गर्मी लगना", "धड़कन तेज", "घबराहट"] },
+                { disease: "अल्जाइमर", symptoms: ["याददाश्त कम", "घबराहट", "चलने में परेशानी", "बोलने में दिक्कत"] },
+                { disease: "मिर्गी", symptoms: ["दौरे", "घबराहट", "याददाश्त कम", "मांसपेशी फड़कना"] },
+                { disease: "नसों की कमजोरी", symptoms: ["सुन्न", "झनझनाहट", "कमजोरी", "संतुलन बिगड़ना"] },
+                { disease: "आंख आना", symptoms: ["लाल आंखें", "आंख में दर्द", "धुंधला दिखना", "रोशनी से परेशानी"] },
+                { disease: "कान का इंफेक्शन", symptoms: ["कान में दर्द", "सुनाई कम देना", "कान में आवाज", "चक्कर"] },
+                { disease: "ब्लड कैंसर", symptoms: ["नाक से खून", "मसूड़ों से खून", "जल्दी नीला पड़ना", "थकान"] },
+                { disease: "क्रोन्स", symptoms: ["मुंह में छाले", "पेट दर्द", "दस्त", "पाखाने में खून"] },
+                { disease: "सेलुलाइटिस", symptoms: ["सूजन", "दर्द", "लाली", "गर्मी"] },
+                { disease: "डीवीटी", symptoms: ["पिंडली में दर्द", "पैर सूजना", "चलने में परेशानी", "लाली"] },
+                { disease: "स्ट्रोक", symptoms: ["चेहरा टेढ़ा", "बोलने में दिक्कत", "कमजोरी", "संतुलन बिगड़ना"] },
+                { disease: "फेफड़ों का कैंसर", symptoms: ["लगातार खांसी", "वजन कम", "रात को पसीना", "सीने में दर्द"] },
+                { disease: "स्लीप एपनिया", symptoms: ["खर्राटे", "नींद आना", "बेचैनी", "सुबह सिरदर्द"] },
+                { disease: "एंग्जायटी", symptoms: ["चिड़चिड़ापन", "बेचैनी", "नींद नहीं आना", "घबराहट"] },
+                { disease: "स्किजोफ्रेनिया", symptoms: ["भ्रम", "गलतफहमी", "शक", "याददाश्त कम"] }
+            ],
+            gu: [
+                { disease: "ફ્લૂ", symptoms: ["તાવ", "ઉધરસ", "થાક", "પેશી દુખાવો", "માથાનો દુખાવો"] },
+                { disease: "મેનિન્જાઇટિસ", symptoms: ["તાવ", "માથાનો દુખાવો", "ગળો કઠણ", "પ્રકાશથી તકલીફ", "ઉલટી આવવી", "ઉલટી"] },
+                { disease: "હાર્ટ એટેક", symptoms: ["છાતીમાં દુખાવો", "શ્વાસ લેવામાં તકલીફ", "ધડકન તેજ", "પસિનો", "ઉલટી આવવી"] },
+                { disease: "સર્દી", symptoms: ["ગળામાં દુખાવો", "ઉધરસ", "નાક વહેવું", "છાંકો"] },
+                { disease: "પેટનો ઈન્ફેક્શન", symptoms: ["પેટમાં દુખાવો", "ઉલટી આવવી", "ઉલટી", "ડાયરીયા", "તાવ"] },
+                { disease: "ડેન્ગ્યુ", symptoms: ["પેશી દુખાવો", "તાવ", "થાક", "ચામડી પર ચકતા", "સાંધામાં દુખાવો"] },
+                { disease: "મસૂર", symptoms: ["ચામડી પર ચકતા", "તાવ", "ઉધરસ", "નાક વહેવું", "લાલ આંખો"] },
+                { disease: "માઈગ્રેન", symptoms: ["ચક્કર", "માથાનો દુખાવો", "ઉલટી આવવી", "પ્રકાશથી તકલીફ", "અવાજથી તકલીફ"] },
+                { disease: "ચિકનગુનિયા", symptoms: ["સાંધામાં દુખાવો", "ચામડી પર ચકતા", "તાવ", "પેશી દુખાવો"] },
+                { disease: "કોરોના", symptoms: ["સ્વાદ ન આવવો", "વાસ ન આવવો", "તાવ", "ઉધરસ", "ગળામાં દુખાવો"] },
+                { disease: "ટીબી", symptoms: ["વજન ઘટવું", "રાત્રે પસીનો", "ઉધરસ", "તાવ", "થાક"] },
+                { disease: "મોનોન્યુક્લિઓસિસ", symptoms: ["ગાંઠ ફૂલવી", "તાવ", "થાક", "ગળામાં દુખાવો"] },
+                { disease: "ગ્લુકોમા", symptoms: ["અસ્પષ્ટ દેખાવું", "માથાનો દુખાવો", "ઉલટી આવવી", "આંખમાં દુખાવો"] },
+                { disease: "પેનિક એટેક", symptoms: ["ધડકન તેજ", "છાતીમાં દુખાવો", "ઘબરાહટ", "શ્વાસ લેવામાં તકલીફ"] },
+                { disease: "કિડની ઈન્ફેક્શન", symptoms: ["પીઠમાં દુખાવો", "તાવ", "મૂત્રમાં લોહી", "મૂત્રમાં દુખાવો"] },
+                { disease: "હેપેટાઈટિસ", symptoms: ["ખંજવાળ", "ચામડી પર ચકતા", "પીળી ત્વચા", "ગાઢ મૂત્ર", "પેટમાં દુખાવો"] },
+                { disease: "એન્સેફેલાઈટિસ", symptoms: ["ગભરાટ", "માથાનો દુખાવો", "તાવ", "ખીંચા"] },
+                { disease: "ડિપ્રેશન", symptoms: ["ડિપ્રેશન", "થાક", "વજન ઘટવું", "ઉંઘ ન આવવી"] },
+                { disease: "મલેરિયા", symptoms: ["ઠંડી લાગવી", "પસિનો", "તાવ", "માથાનો દુખાવો", "પેશી દુખાવો"] },
+                { disease: "ટાઈફોઈડ", symptoms: ["તાવ", "માથાનો દુખાવો", "પેટમાં દુખાવો", "કબજિયાત", "ચામડી પર ચકતા"] },
+                { disease: "હૃદય નબળું", symptoms: ["છાતીમાં દુખાવો", "શ્વાસ લેવામાં તકલીફ", "પગમાં સુજાવો", "થાક"] },
+                { disease: "ન્યુમોનિયા", symptoms: ["કફ સાથે ઉધરસ", "તાવ", "છાતીમાં દુખાવો", "શ્વાસ લેવામાં તકલીફ"] },
+                { disease: "અસ્થમા", symptoms: ["સીટી જેવી અવાજ", "શ્વાસ લેવામાં તકલીફ", "છાતીમાં જકડાણ", "ઉધરસ"] },
+                { disease: "ડાયાબિટીસ", symptoms: ["વારંવાર મૂત્ર", "વધારે તરસ", "વજન ઘટવું", "અસ્પષ્ટ દેખાવું"] },
+                { disease: "મૂત્ર માર્ગ ઈન્ફેક્શન", symptoms: ["મૂત્રમાં દુખાવો", "વારંવાર મૂત્ર", "મૂત્રમાં લોહી", "તાવ"] },
+                { disease: "હાયપોથાયરોઇડ", symptoms: ["વાળ ઊડી જવું", "વજન વધવું", "ઠંડી લાગવી", "થાક", "કબજિયાત"] },
+                { disease: "હાયપરથાયરોઇડ", symptoms: ["વજન ઘટવું", "ગરમી લાગવી", "ધડકન તેજ", "ઘબરાહટ"] },
+                { disease: "અલ્ઝાઈમર", symptoms: ["યાદશક્તિ ઘટવી", "ગભરાટ", "ચાલમાં તકલીફ", "બોલવામાં તકલીફ"] },
+                { disease: "મિર્ગી", symptoms: ["ખીંચા", "ગભરાટ", "યાદશક્તિ ઘટવી", "પેશી ફફડાટ"] },
+                { disease: "નસોની કમજોરી", symptoms: ["સૂં", "ઝણઝણ", "કમજોરી", "સંતુલન ગુમાવવું"] },
+                { disease: "આંખ આવવી", symptoms: ["લાલ આંખો", "આંખમાં દુખાવો", "અસ્પષ્ટ દેખાવું", "પ્રકાશથી તકલીફ"] },
+                { disease: "કાનનો ઈન્ફેક્શન", symptoms: ["કાનમાં દુખાવો", "સાંભળવામાં તકલીફ", "કાનમાં અવાજ", "ચક્કર"] },
+                { disease: "લોહીનો કેન્સર", symptoms: ["નાકમાંથી લોહી", "દાંતના મસૂડામાંથી લોહી", "આસાનીથી નીલાં પડવું", "થાક"] },
+                { disease: "ક્રોન્સ", symptoms: ["મોઢામાં છાળા", "પેટમાં દુખાવો", "ડાયરીયા", "પાખાનમાં લોહી"] },
+                { disease: "સેલ્યુલાઈટિસ", symptoms: ["સૂજન", "દુખાવો", "લાલાશ", "ગરમી"] },
+                { disease: "ડીપ વેઇન થ્રોમ્બોસિસ", symptoms: ["પિંડળીમાં દુખાવો", "પગમાં સુજાવો", "ચાલમાં તકલીફ", "લાલાશ"] },
+                { disease: "સ્ટ્રોક", symptoms: ["ચહેરો વળવો", "બોલવામાં તકલીફ", "કમજોરી", "સંતુલન ગુમાવવું"] },
+                { disease: "ફેફસાનો કેન્સર", symptoms: ["લાગાતાર ઉધરસ", "વજન ઘટવું", "રાત્રે પસીનો", "છાતીમાં દુખાવો"] },
+                { disease: "સ્લીપ એપ્નિયા", symptoms: ["ઘરઘરાટ", "ઉંઘ આવવી", "બેચેની", "સવારનો માથાનો દુખાવો"] },
+                { disease: "એન્ઝાયટી", symptoms: ["ચિડચિડાપણું", "બેચેની", "ઉંઘ ન આવવી", "ઘબરાહટ"] },
+                { disease: "સ્કિઝોફ્રેનિયા", symptoms: ["ભ્રમ", "ભ્રમણા", "શંકા", "યાદશક્તિ ઘટવી"] }
+            ]
+        };
+
+        // --- State Variables ---
+        let currentLanguage = 'en';
+        let diseaseList = diseaseDataByLang[currentLanguage];
+        let selectedSymptomsSet = new Set();
+
+        // --- DOM Elements ---
+        const gridElem = document.getElementById('symptomGrid');
+        const searchElem = document.getElementById('symptomSearch');
+        const findBtn = document.getElementById('findDiseaseBtn');
+        const resultElem = document.getElementById('result');
+
+        // --- Utility Functions ---
+        function getAllSymptoms() {
+            // Collect all unique symptoms for the current language
+            const symptoms = {};
+            for (let i = 0; i < diseaseList.length; i++) {
+                const ds = diseaseList[i];
+                for (let j = 0; j < ds.symptoms.length; j++) {
+                    symptoms[ds.symptoms[j]] = true;
+                }
+            }
+            return Object.keys(symptoms).sort((a, b) => a.localeCompare(b));
+        }
+
+        let allSymptomsArr = getAllSymptoms();
+
+        // --- Rendering Functions ---
+        function renderSymptomButtons(filterText) {
+            gridElem.innerHTML = '';
+            let count = 0;
+            for (let i = 0; i < allSymptomsArr.length; i++) {
+                const symptom = allSymptomsArr[i];
+                if (filterText && !symptom.toLowerCase().includes(filterText.toLowerCase())) continue;
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'disease-btn';
+                btn.textContent = symptom.charAt(0).toUpperCase() + symptom.slice(1);
+                btn.setAttribute('data-symptom', symptom);
+                if (selectedSymptomsSet.has(symptom)) btn.classList.add('selected');
+                btn.onclick = function() {
+                    if (selectedSymptomsSet.has(symptom)) {
+                        selectedSymptomsSet.delete(symptom);
+                        btn.classList.remove('selected');
+                    } else {
+                        selectedSymptomsSet.add(symptom);
+                        btn.classList.add('selected');
+                    }
+                };
+                gridElem.appendChild(btn);
+                count++;
+            }
+            if (count === 0) {
+                gridElem.innerHTML = '<div class="text-muted">No symptoms found.</div>';
+            }
+        }
+
+        // --- Disease Matching ---
+        function getDiseaseMatches(selectedArr) {
+            let matches = [];
+            for (let i = 0; i < diseaseList.length; i++) {
+                const entry = diseaseList[i];
+                let matchCount = 0;
+                for (let j = 0; j < selectedArr.length; j++) {
+                    if (entry.symptoms.includes(selectedArr[j])) matchCount++;
+                }
+                if (matchCount > 0) {
+                    matches.push({
+                        disease: entry.disease,
+                        matchedCount: matchCount,
+                        total: entry.symptoms.length,
+                        symptoms: entry.symptoms
+                    });
+                }
+            }
+            matches.sort(function(a, b) { return b.matchedCount - a.matchedCount; });
+            return matches;
+        }
+
+        // --- Event Handlers ---
+        findBtn.onclick = function() {
+            const selectedArr = Array.from(selectedSymptomsSet);
+            if (selectedArr.length === 0) {
+                resultElem.className = "alert alert-warning mt-4";
+                resultElem.innerHTML = '<i class="fa-solid fa-circle-info me-2"></i>Please select at least one symptom.';
+                resultElem.classList.remove('d-none');
+                resultElem.scrollIntoView({ behavior: "smooth", block: "center" });
+                return;
+            }
+            const matches = getDiseaseMatches(selectedArr);
+            if (matches.length === 0) {
+                resultElem.className = "alert alert-danger mt-4";
+                resultElem.innerHTML = '<i class="fa-solid fa-triangle-exclamation me-2"></i>No diseases found for the selected symptoms.';
+            } else {
+                let html = '<i class="fa-solid fa-notes-medical me-2"></i><b>Possible Diseases:</b><br><ul style="margin-bottom:0">';
+                for (let i = 0; i < matches.length; i++) {
+                    const m = matches[i];
+                    html += `<li><b>${m.disease}</b> <span style="color:#185a9d;">(${m.matchedCount}/${m.total} symptoms matched)</span></li>`;
+                }
+                html += '</ul>';
+                resultElem.className = "alert alert-info mt-4";
+                resultElem.innerHTML = html;
+            }
+            resultElem.classList.remove('d-none');
+            resultElem.scrollIntoView({ behavior: "smooth", block: "center" });
+        };
+
+        searchElem.oninput = function() {
+            renderSymptomButtons(this.value);
+        };
+
+        // --- Language Switcher ---
+        function updateLangSliderBar() {
+            const slider = document.getElementById('lang-slider-bar');
+            const btns = [
+                document.getElementById('lang-en'),
+                document.getElementById('lang-hi'),
+                document.getElementById('lang-gu')
+            ];
+            let idx = 0;
+            if (currentLanguage === 'hi') idx = 1;
+            if (currentLanguage === 'gu') idx = 2;
+            const btn = btns[idx];
+            slider.style.left = btn.offsetLeft + "px";
+            slider.style.width = btn.offsetWidth + "px";
+            slider.style.height = btn.offsetHeight + "px";
+        }
+        setTimeout(updateLangSliderBar, 100);
+        window.addEventListener('resize', updateLangSliderBar);
+
+        function setActiveLangBtn(lang) {
+            ['en', 'hi', 'gu'].forEach(function(l) {
+                document.getElementById('lang-' + l).classList.remove('selected');
+            });
+            document.getElementById('lang-' + lang).classList.add('selected');
+            updateLangSliderBar();
+        }
+
+        function switchLanguage(lang) {
+            currentLanguage = lang;
+            diseaseList = diseaseDataByLang[currentLanguage];
+            allSymptomsArr = getAllSymptoms();
+            selectedSymptomsSet.clear();
+            renderSymptomButtons(searchElem.value);
+            resultElem.classList.add('d-none');
+            setActiveLangBtn(lang);
+        }
+
+        document.getElementById('lang-en').onclick = function() { switchLanguage('en'); };
+        document.getElementById('lang-hi').onclick = function() { switchLanguage('hi'); };
+        document.getElementById('lang-gu').onclick = function() { switchLanguage('gu'); };
+
+        // --- Initial Render ---
+        renderSymptomButtons('');
+    </script>
+</body>
+</html>
