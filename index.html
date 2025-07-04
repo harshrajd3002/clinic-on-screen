@@ -579,6 +579,20 @@
             return matches;
         }
 
+        // --- Dash Bar Rendering ---
+        function renderMatchDashes(matched, total) {
+            let html = '<span style="display:inline-block;vertical-align:middle;margin-left:8px;">';
+            for (let i = 0; i < total; i++) {
+                if (i < matched) {
+                    html += '<span style="display:inline-block;width:18px;height:7px;margin:0 2px;background:#185a9d;border-radius:4px;"></span>';
+                } else {
+                    html += '<span style="display:inline-block;width:18px;height:7px;margin:0 2px;background:#e0e7ef;border-radius:4px;"></span>';
+                }
+            }
+            html += '</span>';
+            return html;
+        }
+
         // --- Event Handlers ---
         findBtn.onclick = function() {
             const selectedArr = Array.from(selectedSymptomsSet);
@@ -597,7 +611,7 @@
                 let html = '<i class="fa-solid fa-notes-medical me-2"></i><b>Possible Diseases:</b><br><ul style="margin-bottom:0">';
                 for (let i = 0; i < matches.length; i++) {
                     const m = matches[i];
-                    html += `<li><b>${m.disease}</b> <span style="color:#185a9d;">(${m.matchedCount}/${m.total} symptoms matched)</span></li>`;
+                    html += `<li><b>${m.disease}</b> <span style="color:#185a9d;">(${m.matchedCount}/${m.total} symptoms matched)</span> ${renderMatchDashes(m.matchedCount, m.total)}</li>`;
                 }
                 html += '</ul>';
                 resultElem.className = "alert alert-info mt-4";
