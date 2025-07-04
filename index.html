@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Symptoms to Disease Checker</title>
@@ -10,20 +11,25 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
     <style>
-        html { scroll-behavior: smooth; }
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             min-height: 100vh;
             background: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%);
         }
+
         .card {
-            background: rgba(255,255,255,0.85);
+            background: rgba(255, 255, 255, 0.85);
             border: none;
             border-radius: 2.5rem;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.18);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
             padding: 3rem 3.5rem !important;
             max-width: 1200px;
             margin: 0 auto;
         }
+
         .disease-grid {
             display: flex;
             flex-wrap: wrap;
@@ -31,6 +37,7 @@
             margin-bottom: 2rem;
             justify-content: center;
         }
+
         .disease-btn {
             border-radius: 2rem;
             border: 2px solid #43cea2;
@@ -45,6 +52,7 @@
             box-shadow: 0 2px 8px #43cea21a;
             will-change: transform;
         }
+
         .disease-btn.selected,
         .disease-btn:active {
             background: linear-gradient(90deg, #43cea2 0%, #185a9d 100%);
@@ -53,9 +61,11 @@
             box-shadow: 0 4px 16px #185a9d33;
             transform: scale(1.07);
         }
+
         .disease-btn:focus {
             box-shadow: 0 0 0 2px #43cea255;
         }
+
         .disease-btn:hover {
             background: linear-gradient(90deg, #185a9d 0%, #43cea2 100%);
             color: #fff !important;
@@ -63,6 +73,7 @@
             z-index: 1;
             box-shadow: 0 4px 16px #185a9d33;
         }
+
         .btn-primary {
             background: linear-gradient(90deg, #43cea2 0%, #185a9d 100%);
             border: none;
@@ -73,23 +84,27 @@
             transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
             box-shadow: 0 2px 8px #43cea244;
         }
+
         .btn-primary:hover,
         .btn-primary:focus {
             background: linear-gradient(90deg, #185a9d 0%, #43cea2 100%);
             transform: translateY(-2px) scale(1.03);
             box-shadow: 0 6px 24px #185a9d33;
         }
+
         #result {
             min-height: 48px;
             font-size: 1.13rem;
             border-radius: 0.85rem;
         }
+
         .disease-icon {
             font-size: 2.7rem;
             color: #43cea2;
             display: block;
             margin: 0 auto 1.2rem auto;
         }
+
         .brand-medico {
             font-size: 1.7rem;
             font-weight: 700;
@@ -101,15 +116,18 @@
             text-decoration: none;
             transition: color 0.2s;
         }
+
         .brand-medico i {
             color: #43cea2;
             font-size: 2.2rem;
             transition: color 0.2s;
         }
+
         .brand-medico:hover,
         .brand-medico:focus {
             color: #185a9d;
         }
+
         .doctor-warning {
             color: #b30000;
             background: #fff3f3;
@@ -125,6 +143,7 @@
             justify-content: center;
             gap: 0.7rem;
         }
+
         footer {
             text-align: center;
             padding: 1.2rem 0 0.5rem 0;
@@ -138,6 +157,7 @@
             justify-content: space-evenly;
             align-items: center;
         }
+
         .footer-thanks {
             color: #fff;
             padding: 0.2em 0.7em;
@@ -150,14 +170,17 @@
             font-size: 1.08em;
             transition: background 0.3s, color 0.3s;
         }
+
         ::-webkit-scrollbar {
             width: 10px;
             background: #e3f6fd;
         }
+
         ::-webkit-scrollbar-thumb {
             background: linear-gradient(120deg, #43cea2 0%, #185a9d 100%);
             border-radius: 6px;
         }
+
         .lang-switcher {
             display: flex;
             justify-content: center;
@@ -168,6 +191,7 @@
             margin-left: auto;
             margin-right: auto;
         }
+
         .lang-btn {
             border: none;
             outline: none;
@@ -190,6 +214,7 @@
             opacity: 0.7;
             filter: grayscale(0.4) brightness(0.95);
         }
+
         .lang-btn.selected,
         .lang-btn:focus {
             color: #fff;
@@ -198,18 +223,21 @@
             transform: scale(1.07);
             z-index: 2;
         }
+
         .lang-btn:hover {
             opacity: 1;
             filter: none;
             transform: scale(1.09);
             box-shadow: 0 6px 24px #185a9d33;
         }
+
         .lang-btn .fa-globe,
         .lang-btn .fa-language,
         .lang-btn .fa-flag {
             font-size: 1.3em;
             opacity: 0.85;
         }
+
         .lang-slider-bar {
             position: absolute;
             top: 0;
@@ -221,80 +249,97 @@
             transition: all 0.35s cubic-bezier(.77, 0, .18, 1);
             box-shadow: 0 4px 18px #185a9d33;
         }
+
         @media (max-width: 992px) {
             .card {
                 padding: 2rem 1.2rem !important;
                 border-radius: 1.5rem;
             }
         }
+
         @media (max-width: 600px) {
             .container.py-5 {
                 padding: 1rem 0 !important;
             }
+
             .card {
                 padding: 1.1rem 0.5rem !important;
                 border-radius: 1rem;
-                box-shadow: 0 4px 16px rgba(0,0,0,0.13);
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.13);
                 max-width: 100vw;
             }
+
             .disease-grid {
                 gap: 0.5rem;
                 margin-bottom: 1rem;
             }
+
             .disease-btn {
                 font-size: 0.98rem;
                 padding: 0.5rem 0.9rem;
                 min-width: 110px;
                 margin-bottom: 0.2rem;
             }
+
             .disease-icon {
                 font-size: 2rem;
                 margin-bottom: 0.7rem;
             }
+
             .brand-medico {
                 font-size: 1.1rem;
                 gap: 0.3rem;
             }
+
             .brand-medico i {
                 font-size: 1.3rem;
             }
+
             .doctor-warning {
                 font-size: 0.98rem;
                 padding: 0.5rem 0.7rem;
                 border-radius: 0.5rem;
                 gap: 0.4rem;
             }
+
             .lang-switcher {
                 gap: 0.3rem;
                 margin-bottom: 1.2rem;
             }
+
             .lang-btn {
                 font-size: 0.92rem;
                 padding: 0.4rem 0.7rem;
                 border-radius: 1.2rem;
                 gap: 0.3rem;
             }
+
             .lang-slider-bar {
                 border-radius: 1.2rem;
             }
+
             #result {
                 font-size: 0.98rem;
                 padding: 0.7rem 0.5rem;
                 border-radius: 0.5rem;
             }
+
             footer {
                 font-size: 0.95rem;
                 padding: 0.7rem 0 0.3rem 0;
             }
+
             .footer-thanks {
                 font-size: 1em;
                 padding: 0.15em 0.5em;
                 border-radius: 0.4em;
             }
+
             input#symptomSearch.form-control {
                 font-size: 1rem;
                 padding: 0.5rem 0.7rem;
             }
+
             h2.text-center {
                 font-size: 1.2rem;
                 margin-bottom: 1rem;
@@ -302,6 +347,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Navigation Bar -->
     <nav class="navbar navbar-light bg-transparent mb-3">
@@ -411,7 +457,9 @@
                 { disease: "Lung Cancer", symptoms: ["persistent cough", "weight loss", "night sweats", "chest pain"] },
                 { disease: "Sleep Apnea", symptoms: ["snoring", "sleepiness", "restlessness", "morning headache"] },
                 { disease: "Generalized Anxiety Disorder", symptoms: ["irritability", "restlessness", "insomnia", "anxiety"] },
-                { disease: "Schizophrenia", symptoms: ["hallucinations", "delusions", "paranoia", "memory loss"] }
+                { disease: "Schizophrenia", symptoms: ["hallucinations", "delusions", "paranoia", "memory loss"] },
+                { disease: "AIDS (Acquired Immunodeficiency Syndrome)", symptoms: ["weight loss", "night sweats", "fever", "fatigue", "recurrent infections", "swollen glands"] },
+                { disease: "HIV Infection", symptoms: ["fever", "fatigue", "rash", "swollen glands", "muscle pain", "sore throat"] }
             ],
             hi: [
                 { disease: "फ्लू", symptoms: ["बुखार", "खांसी", "थकान", "मांसपेशी दर्द", "सिरदर्द"] },
@@ -454,7 +502,9 @@
                 { disease: "फेफड़ों का कैंसर", symptoms: ["लगातार खांसी", "वजन कम", "रात को पसीना", "सीने में दर्द"] },
                 { disease: "स्लीप एपनिया", symptoms: ["खर्राटे", "नींद आना", "बेचैनी", "सुबह सिरदर्द"] },
                 { disease: "एंग्जायटी", symptoms: ["चिड़चिड़ापन", "बेचैनी", "नींद नहीं आना", "घबराहट"] },
-                { disease: "स्किजोफ्रेनिया", symptoms: ["भ्रम", "गलतफहमी", "शक", "याददाश्त कम"] }
+                { disease: "स्किजोफ्रेनिया", symptoms: ["भ्रम", "गलतफहमी", "शक", "याददाश्त कम"] },
+                { disease: "एड्स", symptoms: ["वजन कम", "रात को पसीना", "बुखार", "थकान", "बार-बार संक्रमण", "गांठ सूजना"] },
+                { disease: "एचआईवी संक्रमण", symptoms: ["बुखार", "थकान", "चक्कते", "गांठ सूजना", "मांसपेशी दर्द", "गला खराब"] }
             ],
             gu: [
                 { disease: "ફ્લૂ", symptoms: ["તાવ", "ઉધરસ", "થાક", "પેશી દુખાવો", "માથાનો દુખાવો"] },
@@ -497,7 +547,9 @@
                 { disease: "ફેફસાનો કેન્સર", symptoms: ["લાગાતાર ઉધરસ", "વજન ઘટવું", "રાત્રે પસીનો", "છાતીમાં દુખાવો"] },
                 { disease: "સ્લીપ એપ્નિયા", symptoms: ["ઘરઘરાટ", "ઉંઘ આવવી", "બેચેની", "સવારનો માથાનો દુખાવો"] },
                 { disease: "એન્ઝાયટી", symptoms: ["ચિડચિડાપણું", "બેચેની", "ઉંઘ ન આવવી", "ઘબરાહટ"] },
-                { disease: "સ્કિઝોફ્રેનિયા", symptoms: ["ભ્રમ", "ભ્રમણા", "શંકા", "યાદશક્તિ ઘટવી"] }
+                { disease: "સ્કિઝોફ્રેનિયા", symptoms: ["ભ્રમ", "ભ્રમણા", "શંકા", "યાદશક્તિ ઘટવી"] },
+                { disease: "એડ્સ", symptoms: ["વજન ઘટવું", "રાત્રે પસીનો", "તાવ", "થાક", "વારંવાર ચેપ", "ગાંઠ ફૂલવી"] },
+                { disease: "એચઆઈવી સંક્રમણ", symptoms: ["તાવ", "થાક", "ચામડી પર ચકતા", "ગાંઠ ફૂલવી", "પેશી દુખાવો", "ગળામાં દુખાવો"] }
             ]
         };
 
@@ -540,7 +592,7 @@
                 btn.textContent = symptom.charAt(0).toUpperCase() + symptom.slice(1);
                 btn.setAttribute('data-symptom', symptom);
                 if (selectedSymptomsSet.has(symptom)) btn.classList.add('selected');
-                btn.onclick = function() {
+                btn.onclick = function () {
                     if (selectedSymptomsSet.has(symptom)) {
                         selectedSymptomsSet.delete(symptom);
                         btn.classList.remove('selected');
@@ -575,7 +627,7 @@
                     });
                 }
             }
-            matches.sort(function(a, b) { return b.matchedCount - a.matchedCount; });
+            matches.sort(function (a, b) { return b.matchedCount - a.matchedCount; });
             return matches;
         }
 
@@ -594,7 +646,7 @@
         }
 
         // --- Event Handlers ---
-        findBtn.onclick = function() {
+        findBtn.onclick = function () {
             const selectedArr = Array.from(selectedSymptomsSet);
             if (selectedArr.length === 0) {
                 resultElem.className = "alert alert-warning mt-4";
@@ -621,7 +673,7 @@
             resultElem.scrollIntoView({ behavior: "smooth", block: "center" });
         };
 
-        searchElem.oninput = function() {
+        searchElem.oninput = function () {
             renderSymptomButtons(this.value);
         };
 
@@ -645,7 +697,7 @@
         window.addEventListener('resize', updateLangSliderBar);
 
         function setActiveLangBtn(lang) {
-            ['en', 'hi', 'gu'].forEach(function(l) {
+            ['en', 'hi', 'gu'].forEach(function (l) {
                 document.getElementById('lang-' + l).classList.remove('selected');
             });
             document.getElementById('lang-' + lang).classList.add('selected');
@@ -662,12 +714,13 @@
             setActiveLangBtn(lang);
         }
 
-        document.getElementById('lang-en').onclick = function() { switchLanguage('en'); };
-        document.getElementById('lang-hi').onclick = function() { switchLanguage('hi'); };
-        document.getElementById('lang-gu').onclick = function() { switchLanguage('gu'); };
+        document.getElementById('lang-en').onclick = function () { switchLanguage('en'); };
+        document.getElementById('lang-hi').onclick = function () { switchLanguage('hi'); };
+        document.getElementById('lang-gu').onclick = function () { switchLanguage('gu'); };
 
         // --- Initial Render ---
         renderSymptomButtons('');
     </script>
 </body>
+
 </html>
